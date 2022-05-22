@@ -89,6 +89,11 @@ async function run() {
       const result = await purchaseCollection.insertOne(purchaseData);
       res.send(result);
     });
+    app.get("/Purchase", async (req, res) => {
+      const email = req.query.email;
+      const result = await purchaseCollection.find({ email }).toArray();
+      res.send(result);
+    });
   } finally {
     // await client.close();
   }
