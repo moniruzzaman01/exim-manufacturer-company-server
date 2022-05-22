@@ -20,6 +20,7 @@ async function run() {
     await client.connect();
     const userCollection = client.db("exim").collection("users");
     const partsCollection = client.db("exim").collection("parts");
+    const reviewCollection = client.db("exim").collection("reviews");
 
     app.put("/users", async (req, res) => {
       const email = req.query.email;
@@ -51,6 +52,19 @@ async function run() {
       const id = req.query.id;
       const query = { _id: ObjectId(id) };
       const result = await partsCollection.findOne(query);
+      res.send(result);
+    });
+    app.post("/review", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.send(result);
+    });
+    app.get("/review", async (req, res) => {
+      const result = await reviewCollection
+        .find()
+        .sort({ _id: -1 })
+        .limit(3)
+        .toArray();
       res.send(result);
     });
   } finally {
