@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -19,13 +19,15 @@ async function run() {
   try {
     await client.connect();
     const userCollection = client.db("exim").collection("users");
+    const partsCollection = client.db("exim").collection("parts");
 
     app.put("/users", async (req, res) => {
       const email = req.query.email;
+      const user = req.body;
       const filter = { email };
       const options = { upsert: true };
       const updatedDoc = {
-        $set: { email },
+        $set: user,
       };
       const result = await userCollection.updateOne(
         filter,
@@ -36,6 +38,20 @@ async function run() {
         expiresIn: "1d",
       });
       res.send({ result, accessToken: token });
+    });
+    app.get("/users", async (req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/parts", async (req, res) => {
+      const result = await partsCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/partsById", async (req, res) => {
+      const id = req.query.id;
+      const query = { _id: ObjectId(id) };
+      const result = await partsCollection.findOne(query);
+      res.send(result);
     });
   } finally {
     // await client.close();
