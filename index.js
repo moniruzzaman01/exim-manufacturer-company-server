@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -17,7 +18,25 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    console.log("db connected");
+    const userCollection = client.db("exim").collection("users");
+
+    app.put("/users", async (req, res) => {
+      const email = req.query.email;
+      const filter = { email };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: { email },
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1d",
+      });
+      res.send({ result, accessToken: token });
+    });
   } finally {
     // await client.close();
   }
