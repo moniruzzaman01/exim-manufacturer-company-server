@@ -83,6 +83,11 @@ async function run() {
       const result = await userCollection.findOne({ email });
       res.send(result);
     });
+    app.post("/parts", async (req, res) => {
+      const data = req.body;
+      const result = await partsCollection.insertOne(data);
+      res.send(result);
+    });
     app.get("/parts", async (req, res) => {
       const result = await partsCollection.find().sort({ _id: -1 }).toArray();
       res.send(result);
