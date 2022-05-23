@@ -62,6 +62,11 @@ async function run() {
       const result = await userCollection.find().toArray();
       res.send(result);
     });
+    app.get("/usersByEmail", async (req, res) => {
+      const email = req.query.email;
+      const result = await userCollection.findOne({ email });
+      res.send(result);
+    });
     app.get("/parts", async (req, res) => {
       const result = await partsCollection
         .find()
