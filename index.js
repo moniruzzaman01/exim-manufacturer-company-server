@@ -63,7 +63,11 @@ async function run() {
       res.send(result);
     });
     app.get("/parts", async (req, res) => {
-      const result = await partsCollection.find().toArray();
+      const result = await partsCollection
+        .find()
+        .sort({ _id: -1 })
+        .limit(6)
+        .toArray();
       res.send(result);
     });
     app.get("/partsById", async (req, res) => {
