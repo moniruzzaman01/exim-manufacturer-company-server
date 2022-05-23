@@ -105,6 +105,12 @@ async function run() {
       const result = await purchaseCollection.findOne(query);
       res.send(result);
     });
+    app.delete("/purchaseById/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await purchaseCollection.deleteOne(query);
+      res.send(result);
+    });
     app.put("/purchaseById/:id", async (req, res) => {
       const id = req.params.id;
       const item = req.body;
