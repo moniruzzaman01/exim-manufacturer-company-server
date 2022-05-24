@@ -78,6 +78,16 @@ async function run() {
       );
       res.send(result);
     });
+    app.put("/usersByEmail", async (req, res) => {
+      const email = req.query.email;
+      const mobile = req.body;
+      const filter = { email };
+      const updatedDoc = {
+        $set: mobile,
+      };
+      const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
     app.get("/usersByEmail", async (req, res) => {
       const email = req.query.email;
       const result = await userCollection.findOne({ email });
